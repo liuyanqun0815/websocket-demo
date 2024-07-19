@@ -40,7 +40,7 @@ public class WebSocketServer {
         } else {
             webSocketMap.put(userId, this);
         }
-        System.out.println("连接成功");
+        System.out.println("连接成功,时间:"+System.currentTimeMillis());
     }
 
     /**
@@ -53,7 +53,7 @@ public class WebSocketServer {
         if (webSocketMap.containsKey(userId)) {
             webSocketMap.remove(userId);
         }
-        System.out.println("关闭连接");
+        System.out.println("关闭连接,时间:"+System.currentTimeMillis());
     }
 
     /**
@@ -67,7 +67,7 @@ public class WebSocketServer {
         System.out.println("后端接收前端web发送数据userId:" + userId + ",接收信息：" + text);
         if (webSocketMap.containsKey(userId)) {
             try {
-                webSocketMap.get(userId).session.getBasicRemote().sendText("返回web数据userId:" + userId + ",返回消息：" + text);
+                webSocketMap.get(userId).session.getBasicRemote().sendText("返回web数据userId:" + userId + ",返回消息：" + text+",时间:"+System.currentTimeMillis());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -91,13 +91,22 @@ public class WebSocketServer {
      * @param message
      */
     public static void sendInfo(String userId, String message) {
-        System.out.println("后端发送前端web数据userId:" + userId + "发送消息：" + message);
+        System.out.println("后端发送前端web数据userId:" + userId + "发送消息：" + message+",时间:"+System.currentTimeMillis());
         if (webSocketMap.containsKey(userId)) {
             try {
                 webSocketMap.get(userId).session.getBasicRemote().sendText("后端发送前端web数据userId" + userId + "，内容：" + message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * 服务端主动关闭websocket连接
+     */
+    public static void close(String userId) throws IOException {
+        if (webSocketMap.containsKey(userId)) {
+            webSocketMap.get(userId).session.close();
         }
     }
 }
